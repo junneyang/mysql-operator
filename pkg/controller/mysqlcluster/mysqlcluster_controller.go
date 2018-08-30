@@ -126,7 +126,7 @@ func (r *ReconcileMysqlCluster) Reconcile(request reconcile.Request) (reconcile.
 		// Error reading the object - requeue the request.
 		return reconcile.Result{}, err
 	}
-	log.Info(fmt.Sprintf("Syncing cluster: %s/%s", cluster.Name, cluster.Namespace))
+	log.Info("syncing cluster", "cluster", request.NamespacedName.String())
 
 	// check for secretName to be specified
 	if len(cluster.Spec.SecretName) == 0 {

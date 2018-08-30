@@ -64,7 +64,6 @@ var _ = Describe("MysqlCluster controller", func() {
 	})
 
 	AfterEach(func() {
-		time.Sleep(1 * time.Second)
 		close(stop)
 	})
 

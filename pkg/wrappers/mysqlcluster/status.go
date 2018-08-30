@@ -46,7 +46,7 @@ func (c *MysqlCluster) UpdateStatusCondition(condType api.ClusterConditionType,
 		newCondition.LastTransitionTime = metav1.NewTime(t)
 		c.Status.Conditions = []api.ClusterCondition{newCondition}
 	} else {
-		if i, exist := c.condExists(condType); exist {
+		if i, exist := c.condIndex(condType); exist {
 			cond := c.Status.Conditions[i]
 			if cond.Status != newCondition.Status {
 				glog.V(3).Infof("Found status change for mysql cluster "+
@@ -68,9 +68,9 @@ func (c *MysqlCluster) UpdateStatusCondition(condType api.ClusterConditionType,
 	}
 }
 
-func (c *MysqlCluster) condExists(ty api.ClusterConditionType) (int, bool) {
+func (c *MysqlCluster) condIndex(condType api.ClusterConditionType) (int, bool) {
 	for i, cond := range c.Status.Conditions {
-		if cond.Type == ty {
+		if cond.Type == condType {
 			return i, true
 		}
 	}
@@ -78,9 +78,9 @@ func (c *MysqlCluster) condExists(ty api.ClusterConditionType) (int, bool) {
 	return 0, false
 }
 
-func (c *MysqlCluster) UpdateConditionForNode(name string, cType api.NodeConditionType, cStatus core.ConditionStatus) bool {
-	i := c.GetNodeStatusIndex(name)
-	return updateNodeCondition(&c.Status.Nodes[i], cType, cStatus)
+func (c *MysqlCluster) UpdateNodeConditionStatus(nodeName string, condType api.NodeConditionType, status core.ConditionStatus) bool {
+	i := c.GetNodeStatusIndex(nodeName)
+	return updateNodeCondition(&c.Status.Nodes[i], condType, status)
 }
 
 // UpdateNodeCondition updates the condition for a given type
@@ -102,7 +102,7 @@ func updateNodeCondition(ns *api.NodeStatus, cType api.NodeConditionType,
 		ns.Conditions = []api.NodeCondition{newCondition}
 		changed = true
 	} else {
-		if i, exist := nsCondExists(ns, cType); exist {
+		if i, exist := nodeConditionIndex(ns, cType); exist {
 			cond := ns.Conditions[i]
 			if cond.Status != newCondition.Status {
 				glog.V(4).Infof("Found status change for node "+
@@ -128,9 +128,9 @@ func updateNodeCondition(ns *api.NodeStatus, cType api.NodeConditionType,
 	return changed
 }
 
-func nsCondExists(ns *api.NodeStatus, cType api.NodeConditionType) (int, bool) {
-	for i, cond := range ns.Conditions {
-		if cond.Type == cType {
+func nodeConditionIndex(nodeStatus *api.NodeStatus, condType api.NodeConditionType) (int, bool) {
+	for i, cond := range nodeStatus.Conditions {
+		if cond.Type == condType {
 			return i, true
 		}
 	}
@@ -150,9 +150,9 @@ func (c *MysqlCluster) GetNodeStatusIndex(name string) int {
 
 }
 
-func (c *MysqlCluster) GetNodeCondition(name string, cType api.NodeConditionType) *api.NodeCondition {
+func (c *MysqlCluster) GetNodeCondition(name string, condType api.NodeConditionType) *api.NodeCondition {
 	nodeStatusIndex := c.GetNodeStatusIndex(name)
-	condIndex, exists := nsCondExists(&c.Status.Nodes[nodeStatusIndex], cType)
+	condIndex, exists := nodeConditionIndex(&c.Status.Nodes[nodeStatusIndex], condType)
 	if exists {
 		return &c.Status.Nodes[nodeStatusIndex].Conditions[condIndex]
 	}
