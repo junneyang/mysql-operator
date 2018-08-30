@@ -130,7 +130,7 @@ func (r *ReconcileMysqlCluster) Reconcile(request reconcile.Request) (reconcile.
 
 	// check for secretName to be specified
 	if len(cluster.Spec.SecretName) == 0 {
-		return reconcile.Result{}, fmt.Errorf("the spec.SecretName is empty")
+		return reconcile.Result{}, fmt.Errorf("the spec.secretName is empty")
 	}
 
 	// TODO: set default on a copy cluster

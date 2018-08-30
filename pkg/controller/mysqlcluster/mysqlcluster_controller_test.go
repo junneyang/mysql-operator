@@ -97,6 +97,45 @@ var _ = Describe("MysqlCluster controller", func() {
 				},
 			}
 
+			clusterComps := []runtime.Object{
+				&apps.StatefulSet{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      cluster.GetNameForResource(api.StatefulSet),
+						Namespace: cluster.Namespace,
+					},
+				},
+				&core.Service{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      cluster.GetNameForResource(api.HeadlessSVC),
+						Namespace: cluster.Namespace,
+					},
+				},
+				&core.Service{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      cluster.GetNameForResource(api.MasterService),
+						Namespace: cluster.Namespace,
+					},
+				},
+				&core.Service{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      cluster.GetNameForResource(api.HealthyNodesService),
+						Namespace: cluster.Namespace,
+					},
+				},
+				&core.ConfigMap{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      cluster.GetNameForResource(api.ConfigMap),
+						Namespace: cluster.Namespace,
+					},
+				},
+				&policy.PodDisruptionBudget{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      cluster.GetNameForResource(api.PodDisruptionBudget),
+						Namespace: cluster.Namespace,
+					},
+				},
+			}
+
 			Expect(c.Create(context.TODO(), secret)).To(Succeed())
 
 		})
@@ -136,45 +175,6 @@ var _ = Describe("MysqlCluster controller", func() {
 			Expect(c.Create(context.TODO(), cluster)).To(Succeed())
 			defer c.Delete(context.TODO(), cluster)
 			Eventually(requests, timeout).Should(Receive(Equal(expectedRequest)))
-
-			clusterComps := []runtime.Object{
-				&apps.StatefulSet{
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      cluster.GetNameForResource(api.StatefulSet),
-						Namespace: cluster.Namespace,
-					},
-				},
-				&core.Service{
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      cluster.GetNameForResource(api.HeadlessSVC),
-						Namespace: cluster.Namespace,
-					},
-				},
-				&core.Service{
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      cluster.GetNameForResource(api.MasterService),
-						Namespace: cluster.Namespace,
-					},
-				},
-				&core.Service{
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      cluster.GetNameForResource(api.HealthyNodesService),
-						Namespace: cluster.Namespace,
-					},
-				},
-				&core.ConfigMap{
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      cluster.GetNameForResource(api.ConfigMap),
-						Namespace: cluster.Namespace,
-					},
-				},
-				&policy.PodDisruptionBudget{
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      cluster.GetNameForResource(api.PodDisruptionBudget),
-						Namespace: cluster.Namespace,
-					},
-				},
-			}
 
 			testfunc := func() error {
 				for _, obj := range clusterComps {
@@ -266,44 +266,6 @@ var _ = Describe("MysqlCluster controller", func() {
 })
 
 func removeAllCreatedResource(c client.Client, cluster *api.MysqlCluster) {
-	objs := []runtime.Object{
-		&apps.StatefulSet{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      cluster.GetNameForResource(api.StatefulSet),
-				Namespace: cluster.Namespace,
-			},
-		},
-		&core.Service{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      cluster.GetNameForResource(api.HeadlessSVC),
-				Namespace: cluster.Namespace,
-			},
-		},
-		&core.Service{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      cluster.GetNameForResource(api.MasterService),
-				Namespace: cluster.Namespace,
-			},
-		},
-		&core.Service{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      cluster.GetNameForResource(api.HealthyNodesService),
-				Namespace: cluster.Namespace,
-			},
-		},
-		&core.ConfigMap{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      cluster.GetNameForResource(api.ConfigMap),
-				Namespace: cluster.Namespace,
-			},
-		},
-		&policy.PodDisruptionBudget{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      cluster.GetNameForResource(api.PodDisruptionBudget),
-				Namespace: cluster.Namespace,
-			},
-		},
-	}
 
 	for _, obj := range objs {
 		c.Delete(context.TODO(), obj)
