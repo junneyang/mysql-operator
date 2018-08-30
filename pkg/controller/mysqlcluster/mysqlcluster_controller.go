@@ -38,8 +38,8 @@ import (
 
 	mysqlv1alpha1 "github.com/presslabs/mysql-operator/pkg/apis/mysql/v1alpha1"
 	"github.com/presslabs/mysql-operator/pkg/options"
-	"github.com/presslabs/mysql-operator/pkg/syncers"
-	"github.com/presslabs/mysql-operator/pkg/syncers/mysqlcluster"
+	"github.com/presslabs/mysql-operator/pkg/syncer"
+	"github.com/presslabs/mysql-operator/pkg/syncer/mysqlcluster"
 )
 
 var log = logf.Log.WithName(controllerName)
