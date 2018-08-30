@@ -56,7 +56,7 @@ func (c *MysqlClusterSpec) SetDefaults(opt *options.Options, cluster *MysqlClust
 		c.MysqlVersion = opt.MysqlImageTag
 	}
 
-	c.PodSpec.SetDefaults(opt, cluster)
+	c.SetDefaults(c.PodSpec, opt)
 
 	if len(c.MysqlConf) == 0 {
 		c.MysqlConf = make(MysqlConf)
@@ -112,17 +112,17 @@ func (c *MysqlClusterSpec) SetDefaults(opt *options.Options, cluster *MysqlClust
 		}
 	}
 
-	c.VolumeSpec.SetDefaults()
+	c.setVolumeSpecDefaults(c.VolumeSpec, opt)
 }
 
 // SetDefaults for PodSpec
-func (ps *PodSpec) setPodSpecDefaults(opt *options.Options, cluster *MysqlCluster) {
-	if len(ps.ImagePullPolicy) == 0 {
-		ps.ImagePullPolicy = opt.ImagePullPolicy
+func (c *MysqlCluster) setPodSpecDefaults(spec *PodSpec, opt *options.Options) {
+	if len(spec.ImagePullPolicy) == 0 {
+		spec.ImagePullPolicy = opt.ImagePullPolicy
 	}
 
-	if len(ps.Resources.Requests) == 0 {
-		ps.Resources = apiv1.ResourceRequirements{
+	if len(spec.Resources.Requests) == 0 {
+		spec.Resources = apiv1.ResourceRequirements{
 			Requests: apiv1.ResourceList{
 				apiv1.ResourceCPU:    resource.MustParse(resourceRequestCPU),
 				apiv1.ResourceMemory: resource.MustParse(resourceRequestMemory),
@@ -131,15 +131,15 @@ func (ps *PodSpec) setPodSpecDefaults(opt *options.Options, cluster *MysqlCluste
 	}
 
 	// set pod antiaffinity to nodes stay away from other nodes.
-	if ps.Affinity.PodAntiAffinity == nil {
-		ps.Affinity.PodAntiAffinity = &core.PodAntiAffinity{
+	if spec.Affinity.PodAntiAffinity == nil {
+		spec.Affinity.PodAntiAffinity = &core.PodAntiAffinity{
 			PreferredDuringSchedulingIgnoredDuringExecution: []core.WeightedPodAffinityTerm{
 				core.WeightedPodAffinityTerm{
 					Weight: 100,
 					PodAffinityTerm: core.PodAffinityTerm{
 						TopologyKey: "kubernetes.io/hostname",
 						LabelSelector: &metav1.LabelSelector{
-							MatchLabels: cluster.GetLabels(),
+							MatchLabels: c.GetLabels(),
 						},
 					},
 				},
@@ -149,15 +149,15 @@ func (ps *PodSpec) setPodSpecDefaults(opt *options.Options, cluster *MysqlCluste
 }
 
 // SetDefaults for VolumeSpec
-func (vs *VolumeSpec) setVolumeSpecDefaults() {
-	if len(vs.AccessModes) == 0 {
-		vs.AccessModes = []apiv1.PersistentVolumeAccessMode{
+func (c *MysqlCluster) setVolumeSpecDefaults(spec *VolumeSpec, opt *options.Options) {
+	if len(spec.AccessModes) == 0 {
+		spec.AccessModes = []apiv1.PersistentVolumeAccessMode{
 			apiv1.ReadWriteOnce,
 		}
 	}
 
-	if len(vs.Resources.Requests) == 0 {
-		vs.Resources = apiv1.ResourceRequirements{
+	if len(spec.Resources.Requests) == 0 {
+		spec.Resources = apiv1.ResourceRequirements{
 			Requests: apiv1.ResourceList{
 				apiv1.ResourceStorage: resource.MustParse(resourceStorage),
 			},
