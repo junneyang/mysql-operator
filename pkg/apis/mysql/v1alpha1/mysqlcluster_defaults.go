@@ -116,7 +116,7 @@ func (c *MysqlClusterSpec) SetDefaults(opt *options.Options, cluster *MysqlClust
 }
 
 // SetDefaults for PodSpec
-func (ps *PodSpec) SetDefaults(opt *options.Options, cluster *MysqlCluster) {
+func (ps *PodSpec) setPodSpecDefaults(opt *options.Options, cluster *MysqlCluster) {
 	if len(ps.ImagePullPolicy) == 0 {
 		ps.ImagePullPolicy = opt.ImagePullPolicy
 	}
@@ -149,7 +149,7 @@ func (ps *PodSpec) SetDefaults(opt *options.Options, cluster *MysqlCluster) {
 }
 
 // SetDefaults for VolumeSpec
-func (vs *VolumeSpec) SetDefaults() {
+func (vs *VolumeSpec) setVolumeSpecDefaults() {
 	if len(vs.AccessModes) == 0 {
 		vs.AccessModes = []apiv1.PersistentVolumeAccessMode{
 			apiv1.ReadWriteOnce,

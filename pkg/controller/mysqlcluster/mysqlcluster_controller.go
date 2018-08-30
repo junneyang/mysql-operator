@@ -42,14 +42,14 @@ import (
 	"github.com/presslabs/mysql-operator/pkg/syncers/mysqlcluster"
 )
 
+var log = logf.Log.WithName(controllerName)
+
+const controllerName = "mysqlcluster-controller"
+
 const (
 	eventNormal  = "Normal"
 	eventWarning = "Warning"
 )
-
-var log = logf.Log.WithName(controllerName)
-
-const controllerName = "mysqlcluster-controller"
 
 // Add creates a new MysqlCluster Controller and adds it to the Manager with default RBAC. The Manager will set fields on the Controller
 // and Start it when the Manager is Started.
