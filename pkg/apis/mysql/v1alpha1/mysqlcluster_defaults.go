@@ -56,7 +56,7 @@ func (c *MysqlClusterSpec) SetDefaults(opt *options.Options, cluster *MysqlClust
 		c.MysqlVersion = opt.MysqlImageTag
 	}
 
-	c.SetDefaults(c.PodSpec, opt)
+	cluster.setPodSpecDefaults(&(c.PodSpec), opt)
 
 	if len(c.MysqlConf) == 0 {
 		c.MysqlConf = make(MysqlConf)
@@ -112,7 +112,7 @@ func (c *MysqlClusterSpec) SetDefaults(opt *options.Options, cluster *MysqlClust
 		}
 	}
 
-	c.setVolumeSpecDefaults(c.VolumeSpec, opt)
+	cluster.setVolumeSpecDefaults(&(c.VolumeSpec), opt)
 }
 
 // SetDefaults for PodSpec

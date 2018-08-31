@@ -67,7 +67,7 @@ func (c *MysqlCluster) GetMasterHost() string {
 func (c *MysqlCluster) AsOwnerReference() metav1.OwnerReference {
 	trueVar := true
 	return metav1.OwnerReference{
-		APIVersion: api.SchemeGroupVersion.String(),
+		APIVersion: SchemeGroupVersion.String(),
 		Kind:       "MysqlCluster",
 		Name:       c.Name,
 		UID:        c.UID,
