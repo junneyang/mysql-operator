@@ -120,12 +120,8 @@ var (
 
 		"character-set-server": "utf8mb4",
 		"collation-server":     "utf8mb4_unicode_ci",
-	}
 
-	// MysqlMasterSlaveBooleanConfigs represents the boolean configs from config file
-	MysqlMasterSlaveBooleanConfigs = []string{
-		// Safety
-		"skip-name-resolve",
-		"skip-host-cache",
+		"skip-name-resolve": "on",
+		"skip-host-cache":   "on",
 	}
 )

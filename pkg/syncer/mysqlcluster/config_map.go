@@ -92,7 +92,6 @@ func (s *configMapSyncer) getMysqlConfData() (string, string, error) {
 	sec := cfg.Section("mysqld")
 
 	addKVConfigsToSection(sec, MysqlMasterSlaveConfigs, s.cluster.Spec.MysqlConf)
-	addBConfigsToSection(sec, MysqlMasterSlaveBooleanConfigs)
 
 	// include configs from /etc/mysql/conf.d/*.cnf
 	_, err := sec.NewBooleanKey(fmt.Sprintf("!includedir %s", ConfDPath))

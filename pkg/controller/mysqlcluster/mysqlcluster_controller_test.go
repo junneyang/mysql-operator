@@ -21,6 +21,7 @@ import (
 	"time"
 
 	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gstruct"
 
@@ -37,6 +38,8 @@ import (
 
 	api "github.com/presslabs/mysql-operator/pkg/apis/mysql/v1alpha1"
 )
+
+type clusterComponents []runtime.Object
 
 const timeout = time.Second * 2
 
@@ -72,7 +75,7 @@ var _ = Describe("MysqlCluster controller", func() {
 			expectedRequest reconcile.Request
 			cluster         *api.MysqlCluster
 			secret          *core.Secret
-			clusterComps    []runtime.Object
+			clusterComps    clusterComponents
 		)
 
 		BeforeEach(func() {
@@ -170,7 +173,15 @@ var _ = Describe("MysqlCluster controller", func() {
 			})
 		})
 
-		It("should be created all cluster components", func() {
+		DescribeTable("it reconciles components",
+			func(description string, parameters []interface{}) {
+				Eventually(func() error {
+					return c.Get(context.TODO(), parameters[1].(types.NamespacedName), parameters[0].(runtime.Object))
+				}).Should(Succeed())
+			}, clusterComps.asTableEntries()...,
+		)
+
+		It("should reconciled all cluster components", func() {
 			cluster.Spec.MinAvailable = "30%"
 
 			Expect(c.Create(context.TODO(), cluster)).To(Succeed())
@@ -271,4 +282,25 @@ func removeAllCreatedResource(c client.Client, clusterComps []runtime.Object) {
 	for _, obj := range clusterComps {
 		c.Delete(context.TODO(), obj)
 	}
+}
+
+func (c clusterComponents) asTableEntries() []TableEntry {
+
+	var tableEntries []TableEntry
+
+	for _, obj := range c {
+
+		o := obj.(metav1.Object)
+		key := types.NamespacedName{
+			Name:      o.GetName(),
+			Namespace: o.GetNamespace(),
+		}
+		desc := fmt.Sprintf("reconciles %s %s", key.String(), obj.GetObjectKind().GroupVersionKind().String())
+		tableEntry := Entry(desc, obj, key)
+
+		tableEntries = append(tableEntries, tableEntry)
+	}
+
+	return tableEntries
+
 }
