@@ -72,6 +72,7 @@ var _ = Describe("MysqlCluster controller", func() {
 			expectedRequest reconcile.Request
 			cluster         *api.MysqlCluster
 			secret          *core.Secret
+			clusterComps    []runtime.Object
 		)
 
 		BeforeEach(func() {
@@ -97,7 +98,7 @@ var _ = Describe("MysqlCluster controller", func() {
 				},
 			}
 
-			clusterComps := []runtime.Object{
+			clusterComps = []runtime.Object{
 				&apps.StatefulSet{
 					ObjectMeta: metav1.ObjectMeta{
 						Name:      cluster.GetNameForResource(api.StatefulSet),
@@ -142,7 +143,7 @@ var _ = Describe("MysqlCluster controller", func() {
 
 		AfterEach(func() {
 			// manually delete all created resources because GC isn't enabled in the test controller plane
-			removeAllCreatedResource(c, cluster)
+			removeAllCreatedResource(c, clusterComps)
 			c.Delete(context.TODO(), secret)
 		})
 
@@ -265,9 +266,9 @@ var _ = Describe("MysqlCluster controller", func() {
 
 })
 
-func removeAllCreatedResource(c client.Client, cluster *api.MysqlCluster) {
+func removeAllCreatedResource(c client.Client, clusterComps []runtime.Object) {
 
-	for _, obj := range objs {
+	for _, obj := range clusterComps {
 		c.Delete(context.TODO(), obj)
 	}
 }

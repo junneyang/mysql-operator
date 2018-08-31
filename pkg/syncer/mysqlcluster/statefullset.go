@@ -28,7 +28,7 @@ import (
 
 	api "github.com/presslabs/mysql-operator/pkg/apis/mysql/v1alpha1"
 	"github.com/presslabs/mysql-operator/pkg/options"
-	"github.com/presslabs/mysql-operator/pkg/syncers"
+	"github.com/presslabs/mysql-operator/pkg/syncer"
 	clusterwrap "github.com/presslabs/mysql-operator/pkg/wrappers/mysqlcluster"
 )
 
@@ -56,7 +56,7 @@ type sfsSyncer struct {
 }
 
 // NewStatefulSetSyncer returns a syncer for stateful set
-func NewStatefulSetSyncer(cluster *api.MysqlCluster, cmRev, secRev string, opt *options.Options) syncers.Interface {
+func NewStatefulSetSyncer(cluster *api.MysqlCluster, cmRev, secRev string, opt *options.Options) syncer.Interface {
 	return &sfsSyncer{
 		cluster:           clusterwrap.NewMysqlClusterWrapper(cluster),
 		configMapRevision: cmRev,
@@ -572,8 +572,9 @@ func ensureVolume(in core.Volume, name string, source core.VolumeSource) core.Vo
 }
 
 func (s *sfsSyncer) getOwnerReferences(ors ...[]metav1.OwnerReference) []metav1.OwnerReference {
+
 	rs := []metav1.OwnerReference{
-		s.cluster.AsOwnerReference(),
+		s.cluster.GetOwnerReferences()[0],
 	}
 	for _, or := range ors {
 		for _, o := range or {

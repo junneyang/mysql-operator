@@ -145,7 +145,7 @@ func (r *ReconcileMysqlCluster) Reconcile(request reconcile.Request) (reconcile.
 	}()
 
 	// run the config syncers
-	configSyncers := []syncers.Interface{
+	configSyncers := []syncer.Interface{
 		mysqlcluster.NewConfigMapSyncer(cluster),
 		mysqlcluster.NewSecretSyncer(cluster),
 	}
@@ -164,7 +164,7 @@ func (r *ReconcileMysqlCluster) Reconcile(request reconcile.Request) (reconcile.
 	}
 
 	// run the syncers for services, pdb and statefulset
-	otherSyncers := []syncers.Interface{
+	otherSyncers := []syncer.Interface{
 		mysqlcluster.NewHeadlessSVCSyncer(cluster),
 		mysqlcluster.NewMasterSVCSyncer(cluster),
 		mysqlcluster.NewHealthySVCSyncer(cluster),
@@ -179,7 +179,7 @@ func (r *ReconcileMysqlCluster) Reconcile(request reconcile.Request) (reconcile.
 	return reconcile.Result{}, r.sync(cluster, otherSyncers)
 }
 
-func (r *ReconcileMysqlCluster) sync(cluster *mysqlv1alpha1.MysqlCluster, syncers []syncers.Interface) error {
+func (r *ReconcileMysqlCluster) sync(cluster *mysqlv1alpha1.MysqlCluster, syncers []syncer.Interface) error {
 	for _, s := range syncers {
 		existing := s.GetExistingObjectPlaceholder()
 

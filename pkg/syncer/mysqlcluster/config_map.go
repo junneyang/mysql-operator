@@ -29,7 +29,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 
 	api "github.com/presslabs/mysql-operator/pkg/apis/mysql/v1alpha1"
-	"github.com/presslabs/mysql-operator/pkg/syncers"
+	"github.com/presslabs/mysql-operator/pkg/syncer"
 )
 
 type configMapSyncer struct {
@@ -37,7 +37,7 @@ type configMapSyncer struct {
 }
 
 // NewConfigMapSyncer returns config map syncer
-func NewConfigMapSyncer(cluster *api.MysqlCluster) syncers.Interface {
+func NewConfigMapSyncer(cluster *api.MysqlCluster) syncer.Interface {
 	return &configMapSyncer{
 		cluster: cluster,
 	}

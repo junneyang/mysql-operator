@@ -22,7 +22,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 
 	api "github.com/presslabs/mysql-operator/pkg/apis/mysql/v1alpha1"
-	"github.com/presslabs/mysql-operator/pkg/syncers"
+	"github.com/presslabs/mysql-operator/pkg/syncer"
 )
 
 type masterSVCSyncer struct {
@@ -30,7 +30,7 @@ type masterSVCSyncer struct {
 }
 
 // NewMasterSVCSyncer returns a service syncer for master service
-func NewMasterSVCSyncer(cluster *api.MysqlCluster) syncers.Interface {
+func NewMasterSVCSyncer(cluster *api.MysqlCluster) syncer.Interface {
 	return &masterSVCSyncer{
 		cluster: cluster,
 	}

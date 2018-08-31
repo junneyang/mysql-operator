@@ -22,7 +22,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 
 	api "github.com/presslabs/mysql-operator/pkg/apis/mysql/v1alpha1"
-	"github.com/presslabs/mysql-operator/pkg/syncers"
+	"github.com/presslabs/mysql-operator/pkg/syncer"
 )
 
 type headlessSVCSyncer struct {
@@ -30,7 +30,7 @@ type headlessSVCSyncer struct {
 }
 
 // NewHeadlessSVCSyncer returns a service syncer
-func NewHeadlessSVCSyncer(cluster *api.MysqlCluster) syncers.Interface {
+func NewHeadlessSVCSyncer(cluster *api.MysqlCluster) syncer.Interface {
 	return &headlessSVCSyncer{
 		cluster: cluster,
 	}
